@@ -3,14 +3,13 @@ import { Comment } from "../";
 
 import "./CommentList.css";
 
-const CommentList = () => {
-  return (
-    <ul className="CommentList">
-      <Comment />
-      <Comment />
-      <Comment />
-    </ul>
-  );
+const CommentList = ({ comments }) => {
+  // map data to components
+  const commentList = comments.map((comment, index) => (
+    <Comment name={comment.name} body={comment.body} key={index} />
+  ));
+
+  return <ul className="CommentList">{commentList}</ul>;
 };
 
 export default CommentList;
