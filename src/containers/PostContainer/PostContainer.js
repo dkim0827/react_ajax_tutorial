@@ -3,17 +3,51 @@ import { PostWrapper, Navigator, Post } from "../../components";
 import * as service from "../../services/post";
 
 class PostContainer extends Component {
+  constructor(props) {
+    super();
+    // initializes component state
+    this.state = {
+      postId: 1,
+      fetching: false, // tells whether the request is waiting for response or not
+      post: {
+        title: null,
+        body: null
+      },
+      comments: []
+    };
+    // postId tells id of current post, fetching tells status of request
+  }
+
   componentDidMount() {
     this.fetchPostInfo(1);
   }
 
   // better way of using mutiple async
   fetchPostInfo = async postId => {
+    this.setState({
+      fetching: true // requesting...
+    });
+
     const info = await Promise.all([
       service.getPost(postId),
       service.getComments(postId)
     ]);
-    console.log(info);
+
+    // Object destructing Syntax,
+    // takes out required values and create references to them
+    const { title, body } = info[0].data;
+
+    const comments = info[1].data;
+
+    this.setState({
+      postId,
+      post: {
+        title,
+        body
+      },
+      comments,
+      fetching: false // done!
+    });
   };
 
   // fetchPostInfo = async postId => {
@@ -24,10 +58,16 @@ class PostContainer extends Component {
   // };
 
   render() {
+    // by using destructing syntax this.state.post.title => post.title
+    const { postId, fetching, post, comments } = this.state;
     return (
       <PostWrapper>
-        <Navigator />
-        <Post />
+        <Navigator
+          postId={postId}
+          // while loading disable button
+          disabled={fetching}
+        />
+        <Post title={post.title} body={post.body} comments={comments} />
       </PostWrapper>
     );
   }
