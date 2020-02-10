@@ -28,32 +28,41 @@ class PostContainer extends Component {
       fetching: true // requesting...
     });
 
-    const info = await Promise.all([
-      service.getPost(postId),
-      service.getComments(postId)
-    ]);
-    // fetchPostInfo = async postId => {
-    //   const post = await service.getPost(postId);
-    //   console.log(post);
-    //   const comments = await service.getComments(postId);
-    //   console.log(comments);
-    // };
+    try {
+      // to prevent app crush when press previous at postId === 1
+      const info = await Promise.all([
+        service.getPost(postId),
+        service.getComments(postId)
+      ]);
+      // fetchPostInfo = async postId => {
+      //   const post = await service.getPost(postId);
+      //   console.log(post);
+      //   const comments = await service.getComments(postId);
+      //   console.log(comments);
+      // };
 
-    // Object destructing Syntax,
-    // takes out required values and create references to them
-    const { title, body } = info[0].data;
+      // Object destructing Syntax,
+      // takes out required values and create references to them
+      const { title, body } = info[0].data;
 
-    const comments = info[1].data;
+      const comments = info[1].data;
 
-    this.setState({
-      postId,
-      post: {
-        title,
-        body
-      },
-      comments,
-      fetching: false // done!
-    });
+      this.setState({
+        postId,
+        post: {
+          title,
+          body
+        },
+        comments,
+        fetching: false // done!
+      });
+    } catch (error) {
+      // if err, stop at this point
+      this.setState({
+        fetching: false
+      });
+      console.log("error occured", error);
+    }
   };
 
   handleNavigateClick = type => {
