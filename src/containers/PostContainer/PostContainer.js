@@ -32,6 +32,12 @@ class PostContainer extends Component {
       service.getPost(postId),
       service.getComments(postId)
     ]);
+    // fetchPostInfo = async postId => {
+    //   const post = await service.getPost(postId);
+    //   console.log(post);
+    //   const comments = await service.getComments(postId);
+    //   console.log(comments);
+    // };
 
     // Object destructing Syntax,
     // takes out required values and create references to them
@@ -50,12 +56,15 @@ class PostContainer extends Component {
     });
   };
 
-  // fetchPostInfo = async postId => {
-  //   const post = await service.getPost(postId);
-  //   console.log(post);
-  //   const comments = await service.getComments(postId);
-  //   console.log(comments);
-  // };
+  handleNavigateClick = type => {
+    const postId = this.state.postId;
+
+    if (type === "NEXT") {
+      this.fetchPostInfo(postId + 1);
+    } else {
+      this.fetchPostInfo(postId - 1);
+    }
+  };
 
   render() {
     // by using destructing syntax this.state.post.title => post.title
@@ -66,6 +75,7 @@ class PostContainer extends Component {
           postId={postId}
           // while loading disable button
           disabled={fetching}
+          onClick={this.handleNavigateClick}
         />
         <Post title={post.title} body={post.body} comments={comments} />
       </PostWrapper>
